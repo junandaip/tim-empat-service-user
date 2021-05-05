@@ -20,7 +20,11 @@ class LoginMiddleware
             $check =  User::where('token', $request->input('token'))->first();
 
             if (!$check) {
-                return response('Token Tidak Valid.', 401);
+                $out = [
+                    "message" => "Token Tidak Valid",
+                    "code" => 401
+                ];
+                return response()->json($out, $out['code']);
             } else {
                 return $next($request);
             }
