@@ -10,33 +10,27 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware("login");
-    }
+   
     #Cek data user. Service kita ngga ada fungsi get user, jadi bisa dihapus
     public function index()
     {
         return User::all();
     }
 
-    public function post(Request $request)
+    public function getUsername($username)
     {
-        $this->validate($request, [
-            'username' => 'required',
-            'password' => 'required',
-            'role' => 'required',
-            'kondisi' => 'required'
-        ]);
-
-        $user = User::create(
-            $request->only(['username', 'password', 'role', 'kondisi'])
-        );
-
-        return response()->json([
-            'updated' => true,
-            'data' => $user
-        ], 200);
+        $user = User::where('username', $username)->get();
+        if ($user) {
+            return
+                response()->json([
+                    'message' => 'Get Data by Username',
+                    'data' => $user
+                ], 201);
+        } else {
+            return response()->json([
+                'message' => 'User Not Found',
+            ], 404);
+        }
     }
 
     public function put(Request $request, $username)
@@ -50,7 +44,7 @@ class UserController extends Controller
         }
 
         $user->fill(
-            $request->only(['username', 'password', 'role', 'kondisi'])
+            $request->only(['kondisi'])
         );
 
         $user->save();
@@ -58,25 +52,6 @@ class UserController extends Controller
         return response()->json([
             'created' => true,
             'data' => $user
-        ], 200);
-    }
-
-    public function destroy($username)
-    {
-        try {
-            $user = User::findOrFail($username);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => [
-                    'message' => 'User not found'
-                ]
-            ], 404);
-        }
-
-        $user->delete();
-
-        return response()->json([
-            'deleted' => true
         ], 200);
     }
 }
