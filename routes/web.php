@@ -28,3 +28,5 @@ $router->get('/user/{username}', 'UserController@getUsername');
 $router->put('/user/{username}', 'UserController@put');
 
 $router->post("/register", "AuthController@register");
+
+$router->post("/login", "AuthController@login");

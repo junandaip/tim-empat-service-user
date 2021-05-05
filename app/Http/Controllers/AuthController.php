@@ -38,7 +38,7 @@ class AuthController extends Controller
             ];
         } else {
             $out = [
-                "message" => "vailed_regiser",
+                "message" => "register_failed",
                 "code"   => 404,
             ];
         }
@@ -48,6 +48,52 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $this->validate($request, [
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        $username = $request->input("username");
+        $password = $request->input("password");
+
+        $user = User::where("username", $username)->first();
+
+        if (!$user) {
+            $out = [
+                "message" => "login_failed",
+                "code"    => 401,
+                "result"  => [
+                    "token" => null,
+                ]
+            ];
+            return response()->json($out, $out['code']);
+        }
+
+        if (Hash::check($password, $user->password)) {
+            $newtoken  = $this->generateRandomString();
+
+            $user->update([
+                'token' => $newtoken
+            ]);
+
+            $out = [
+                "message" => "login_success",
+                "code"    => 200,
+                "result"  => [
+                    "token" => $newtoken,
+                ]
+            ];
+        } else {
+            $out = [
+                "message" => "login_failed",
+                "code"    => 401,
+                "result"  => [
+                    "token" => null,
+                ]
+            ];
+        }
+
+        return response()->json($out, $out['code']);
     }
 
     function generateRandomString($length = 80)
