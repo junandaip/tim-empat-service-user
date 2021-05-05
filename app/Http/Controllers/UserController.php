@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends Controller
 {
-
+    public function __construct()
+    {
+        $this->middleware("login");
+    }
     #Cek data user. Service kita ngga ada fungsi get user, jadi bisa dihapus
     public function index()
     {

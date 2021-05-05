@@ -28,3 +28,5 @@ $router->post('/user', 'UserController@post');
 $router->put('/user/{username}', 'UserController@put');
 
 $router->delete('/user/{username}', 'UserController@destroy');
+
+$router->post("/register", "AuthController@register");
