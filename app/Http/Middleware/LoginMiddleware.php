@@ -29,7 +29,11 @@ class LoginMiddleware
                 return $next($request);
             }
         } else {
-            return response('Silahkan Masukkan Token.', 401);
+            $out = [
+                "message" => "Masukkan Token",
+                "code" => 401
+            ];
+            return response()->json($out, $out['code']);
         }
     }
 }
