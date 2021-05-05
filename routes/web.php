@@ -23,10 +23,8 @@ $router->get('/key', function(){
 
 $router->get('/users', 'UserController@index');
 
-$router->post('/user', 'UserController@post');
+$router->get('/user/{username}', 'UserController@getUsername');
 
 $router->put('/user/{username}', 'UserController@put');
-
-$router->delete('/user/{username}', 'UserController@destroy');
 
 $router->post("/register", "AuthController@register");
