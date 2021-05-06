@@ -23,7 +23,7 @@ class UserController extends Controller
 
     public function getUsername($username)
     {
-        $user = User::where('username', $username)->get();
+        $user = User::where('username', $username)->first();
         if ($user) {
             return
                 response()->json([
