@@ -40,6 +40,7 @@ class UserController extends Controller
 
     public function put(Request $request, $username)
     {
+        $username = urldecode($username);
         try {
             $user = User::findOrFail($username);
         } catch (ModelNotFoundException $e) {
