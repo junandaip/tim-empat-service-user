@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
 use App\Models\User;
 use \Illuminate\Http\Request;
 use \Illuminate\Http\Response;
@@ -17,27 +16,26 @@ class UserController extends Controller
         return User::all();
     }
 
-    public function post(Request $request)
+    public function getUsername($username)
     {
-        $this->validate($request, [
-            'username' => 'required',
-            'password' => 'required',
-            'role' => 'required',
-            'kondisi' => 'required'
-        ]);
-
-        $user = User::create(
-            $request->only(['username', 'password', 'role', 'kondisi'])
-        );
-
-        return response()->json([
-            'updated' => true,
-            'data' => $user
-        ], 200);
+        $username = urldecode($username);
+        $user = User::where('username', $username)->first();
+        if ($user) {
+            return
+                response()->json([
+                    'message' => 'Get Data by Username',
+                    'data' => $user
+                ], 201);
+        } else {
+            return response()->json([
+                'message' => 'User Not Found',
+            ], 404);
+        }
     }
 
     public function put(Request $request, $username)
     {
+        $username = urldecode($username);
         try {
             $user = User::findOrFail($username);
         } catch (ModelNotFoundException $e) {
@@ -47,7 +45,7 @@ class UserController extends Controller
         }
 
         $user->fill(
-            $request->only(['username', 'password', 'role', 'kondisi'])
+            $request->only(['kondisi'])
         );
 
         $user->save();
@@ -55,25 +53,6 @@ class UserController extends Controller
         return response()->json([
             'created' => true,
             'data' => $user
-        ], 200);
-    }
-
-    public function destroy($username)
-    {
-        try {
-            $user = User::findOrFail($username);
-        } catch (ModelNotFoundException $e) {
-            return response()->json([
-                'error' => [
-                    'message' => 'User not found'
-                ]
-            ], 404);
-        }
-
-        $user->delete();
-
-        return response()->json([
-            'deleted' => true
         ], 200);
     }
 }
