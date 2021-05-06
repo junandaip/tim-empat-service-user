@@ -23,6 +23,7 @@ class UserController extends Controller
 
     public function getUsername($username)
     {
+        $username = urldecode($username);
         $user = User::where('username', $username)->first();
         if ($user) {
             return
