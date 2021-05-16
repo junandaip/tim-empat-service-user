@@ -29,7 +29,7 @@ class UserController extends Controller
                 response()->json([
                     'message' => 'Get Data by Username',
                     'data' => $user
-                ], 201);
+                ], 200);
         } else {
             return response()->json([
                 'message' => 'User Not Found',
