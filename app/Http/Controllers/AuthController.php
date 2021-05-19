@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+
 
 class AuthController extends Controller
 {
@@ -13,8 +13,8 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $this->validate($request, [
-            'username' => 'required|unique:users|max:255',
-            'password' => 'required|min:6'
+            'username' => 'required',
+            'password' => 'required',
         ]);
 
         $username = $request->input("username");
@@ -36,7 +36,7 @@ class AuthController extends Controller
             ];
         } else {
             $out = [
-                "message" => "vailed_regiser",
+                "message" => "register_failed",
                 "code"   => 404,
             ];
         }
@@ -48,7 +48,7 @@ class AuthController extends Controller
     {
         $this->validate($request, [
             'username' => 'required',
-            'password' => 'required|min:3'
+            'password' => 'required'
         ]);
 
         $username = $request->input("username");
@@ -58,7 +58,7 @@ class AuthController extends Controller
 
         if (!$user) {
             $out = [
-                "message" => "login_vailed",
+                "message" => "login_failed",
                 "code"    => 401,
                 "result"  => [
                     "token" => null,
@@ -79,6 +79,8 @@ class AuthController extends Controller
                 "code"    => 200,
                 "result"  => [
                     "token" => $newtoken,
+                    "kondisi" => $user->kondisi,
+                    "role" => $user->role,
                 ]
             ];
         } else {
@@ -92,6 +94,33 @@ class AuthController extends Controller
         }
 
         return response()->json($out, $out['code']);
+    }
+
+    public function logout(Request $request)
+    {
+        $session = $request->session();
+        $this->validate($request, [
+            'username' => 'required',
+        ]);
+
+        $username = $request->input("username");
+        try {
+            $user = User::where("username", $username)->first();
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Error session'
+            ], 404);
+        }
+
+        $user->update([
+            'token' => null
+        ]);
+
+        $session->flush();
+
+        return response()->json([
+            'message' => "logout_success",
+        ], 200);
     }
 
     function generateRandomString($length = 80)
