@@ -98,7 +98,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $session = $request->session();
+        // $session = $request->session();
         $this->validate($request, [
             'username' => 'required',
         ]);
@@ -116,7 +116,7 @@ class AuthController extends Controller
             'token' => null
         ]);
 
-        $session->flush();
+        // $session->flush();
 
         return response()->json([
             'message' => "logout_success",
